@@ -12,7 +12,7 @@ PKG_ARCH_LINKEASE:=$(ARCH)
 
 PKG_NAME:=linkmount
 PKG_VERSION:=1.0.3
-PKG_RELEASE:=$(PKG_ARCH_LINKEASE)-2
+PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)-binary-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://fw0.koolcenter.com/binary/LinkEase/AutoUpgrade/linkmount/
@@ -31,6 +31,7 @@ define Package/$(PKG_NAME)
 	SUBMENU:=Web Servers/Proxies
 	TITLE:=LinkMount - the file cloud
 	URL:=https://www.linkease.com/
+	DEPENDS:=+libc
 endef
 
 define Package/$(PKG_NAME)/description
@@ -38,16 +39,18 @@ define Package/$(PKG_NAME)/description
 endef
 
 define Build/Configure
+	# No specific configuration step needed for this package
 endef
 
 define Build/Compile
+	# No specific compilation step needed for this package
 endef
 
 define Package/$(PKG_NAME)/install
-	$(INSTALL_DIR) $(1)/usr/sbin/linkmount
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(PKG_ARCH_LINKEASE)/bin/linkmount_bin $(1)/usr/sbin/linkmount/linkmount_bin
-	$(CP) $(PKG_BUILD_DIR)/$(PKG_ARCH_LINKEASE)/bin/lib $(1)/usr/sbin/linkmount/lib
+	$(INSTALL_DIR) $(1)/usr/sbin
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/linkmount_bin $(1)/usr/sbin/linkmount
+	$(INSTALL_DIR) $(1)/usr/lib/linkmount
+	$(CP) $(PKG_BUILD_DIR)/bin/lib/* $(1)/usr/lib/linkmount/
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
-
