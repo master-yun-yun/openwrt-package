@@ -47,9 +47,14 @@ define Build/Compile
 endef
 
 define Package/$(PKG_NAME)/install
+	# Ensure directories are created before installation
 	$(INSTALL_DIR) $(1)/usr/sbin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/linkmount_bin $(1)/usr/sbin/linkmount
 	$(INSTALL_DIR) $(1)/usr/lib/linkmount
+
+	# Install the binary file
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/linkmount_bin $(1)/usr/sbin/linkmount
+
+	# Copy library files
 	$(CP) $(PKG_BUILD_DIR)/bin/lib/* $(1)/usr/lib/linkmount/
 endef
 
