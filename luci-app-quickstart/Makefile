@@ -20,9 +20,19 @@ include $(TOPDIR)/feeds/luci/luci.mk
 
 #-----------2025.04.25---以下新增中文语言包处理逻辑-----------------#
 # Ensure Chinese language file (zh-cn) is included
+##define Package/$(LUCI_PKG_NAME)/install
+##	$(LUCI_INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n
+##	po2lmo ./po/zh-cn/$(LUCI_PKG_NAME).po $(1)/usr/lib/lua/luci/i18n/$(LUCI_PKG_NAME).zh-cn.lmo
+##endef
+#------以上“##”取消即恢复原逻辑
+# Ensure language file (zh-cn) is included
 define Package/$(LUCI_PKG_NAME)/install
-	$(LUCI_INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n
-	po2lmo ./po/zh-cn/$(LUCI_PKG_NAME).po $(1)/usr/lib/lua/luci/i18n/$(LUCI_PKG_NAME).zh-cn.lmo
+	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n
+	@if [ -f ./po/zh-cn/$(LUCI_PKG_NAME).po ]; then \
+		po2lmo ./po/zh-cn/$(LUCI_PKG_NAME).po $(1)/usr/lib/lua/luci/i18n/$(LUCI_PKG_NAME).zh-cn.lmo; \
+	elif [ -f ./po/zh-cn/$(PKG_NAME).po ]; then \
+		po2lmo ./po/zh-cn/$(PKG_NAME).po $(1)/usr/lib/lua/luci/i18n/$(LUCI_PKG_NAME).zh-cn.lmo; \
+	fi
 endef
 #-----------2025.04.25---以上新增中文语言包处理逻辑-----------------#
 
