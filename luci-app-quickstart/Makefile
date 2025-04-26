@@ -23,7 +23,7 @@ include $(TOPDIR)/feeds/luci/luci.mk
 define Package/$(LUCI_PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n
 	# Recursively search for .po files and process only zh-cn files
-	find ./po -type f -name "*.po" | while read po_file; do \
+	find $(PKG_BUILD_DIR)/po -type f -name "*.po" | while read po_file; do \
 		# Extract the basename of the .po file
 		po_basename=$$(basename $$po_file .po); \
 		# Check if the file is a zh-cn language file
