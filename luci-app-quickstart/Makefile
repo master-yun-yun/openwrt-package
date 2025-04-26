@@ -22,11 +22,14 @@ include $(TOPDIR)/feeds/luci/luci.mk
 # Detect and process Chinese language files
 define Package/$(LUCI_PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n
-	# Search for matching .po files (luci-app-xxx.po or xxx.po)
-	for po_file in ./po/zh-cn/$(LUCI_PKG_NAME).po ./po/zh-cn/*.po ./$(LUCI_PKG_NAME).po ./xxx.po; do \
-		if [ -f $$po_file ]; then \
-			po_basename=$$(basename $$po_file .po); \
-			po2lmo $$po_file $(1)/usr/lib/lua/luci/i18n/$$po_basename.zh-cn.lmo; \
+	# Recursively search for .po files and process only zh-cn files
+	find ./po -type f -name "*.po" | while read po_file; do \
+		# Extract the basename of the .po file
+		po_basename=$$(basename $$po_file .po); \
+		# Check if the file is a zh-cn language file
+		if [[ "$$po_file" =~ /zh-cn/ || "$$po_basename" =~ zh-cn ]]; then \
+			# Convert .po to .lmo, ensure the target directory exists
+			po2lmo $$po_file $(1)/usr/lib/lua/luci/i18n/$$po_basename.zh-cn.lmo || echo "Warning: Failed to convert $$po_file"; \
 		fi; \
 	done
 endef
