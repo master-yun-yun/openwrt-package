@@ -58,6 +58,7 @@ define Build/Compile
 endef
 
 define Package/$(PKG_NAME)/install
+	# 安装 Quickstart 的核心文件
 	$(INSTALL_DIR) $(1)/usr/sbin $(1)/etc/init.d $(1)/etc/uci-defaults $(1)/etc/hotplug.d/block $(1)/etc/config $(1)/usr/libexec/quickstart
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/quickstart.$(PKG_ARCH_quickstart) $(1)/usr/sbin/quickstart
 	$(INSTALL_BIN) ./files/quickstart.init $(1)/etc/init.d/quickstart
@@ -69,6 +70,15 @@ define Package/$(PKG_NAME)/install
 	$(LN) /usr/sbin/quickstart $(1)/usr/sbin/startdhns
 	$(INSTALL_DIR) $(1)/etc/hotplug.d/iface
 	$(INSTALL_BIN) ./files/startdhns.hotplug $(1)/etc/hotplug.d/iface/21-startdhns
+
+	# 处理语言包
+	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n
+	find ./po -type f -name "*.po" | while read po_file; do \
+		po_basename=$$(basename $$po_file .po); \
+		if [[ "$$po_file" =~ /zh-cn/ ]]; then \
+			po2lmo $$po_file $(1)/usr/lib/lua/luci/i18n/$$po_basename.zh-cn.lmo || echo "Warning: Failed to convert $$po_file"; \
+		fi; \
+	done
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
